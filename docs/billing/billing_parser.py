@@ -3,6 +3,7 @@ import re
 import csv
 import argparse
 from pathlib import Path
+from datetime import date
 
 # 1) 이미 파싱된 라인: "YYYY.MM.DD amount product..."
 parsed_line_pattern = re.compile(r"^(\d{4})\.(\d{2})\.(\d{2})\s+(\d+)\s+(.+)$")
@@ -16,6 +17,57 @@ def norm_date(y: str, m: str, d: str) -> str:
 
 def norm_amount(s: str) -> int:
     return int(s.replace(",", ""))
+
+def parse_date_ymd(datestr: str) -> date:
+    # datestr: YYYY.MM.DD
+    y, m, d = datestr.split(".")
+    return date(int(y), int(m), int(d))
+
+def add_month_totals(rows):
+    """
+    rows: List[(YYYY.MM.DD, amount:int, product:str)]
+    반환: 월 끝에
+      - 합계 라인: (YYYY.MM, monthly_sum, MONTH_TOTAL)
+      - 빈 줄: ("", "", "")
+    를 삽입한 rows
+    """
+    if not rows:
+        return rows
+
+    # 입력 순서가 뒤죽박죽이어도 월별 "끝나는 시점"이 정의되려면 정렬이 안전함
+    # 같은 날짜 내 순서는 원본 순서를 유지하도록 idx를 함께 둠
+    indexed = []
+    for idx, (dstr, amt, prod) in enumerate(rows):
+        indexed.append((parse_date_ymd(dstr), idx, dstr, amt, prod))
+    indexed.sort(key=lambda x: (x[0], x[1]))
+
+    out = []
+    current_ym = None
+    month_sum = 0
+
+    for dt, _, dstr, amt, prod in indexed:
+        ym = (dt.year, dt.month)
+        if current_ym is None:
+            current_ym = ym
+
+        # 월이 바뀌는 순간: 이전 월의 합계/빈줄 추가
+        if ym != current_ym:
+            y, m = current_ym
+            out.append((f"{y}.{m:02d}", month_sum, "MONTH_TOTAL"))
+            out.append(("", "", ""))  # 월 구분 빈줄
+
+            current_ym = ym
+            month_sum = 0
+
+        out.append((dstr, amt, prod))
+        month_sum += amt
+
+    # 마지막 월 처리
+    y, m = current_ym
+    out.append((f"{y}.{m:02d}", month_sum, "MONTH_TOTAL"))
+    out.append(("", "", ""))
+
+    return out
 
 def parse_from_already_parsed(lines):
     """lines: 'YYYY.MM.DD amount product...' 형태"""
@@ -36,18 +88,10 @@ def parse_from_already_parsed(lines):
 
 def parse_from_raw(lines):
     """
-    원본 형태:
-      상품명
-      상품명
-      날짜(YYYY. M. D.)
-      ₩금액
-      문제 신고
-    + 중간 예외 라인(예: '지불 금액: ...')이 끼거나, Hot Package가 아닌 상품 블록이 섞일 수 있음
-
-    핵심:
-    - 날짜를 만나면, 바로 위에서 '첫 의미 있는 줄'을 상품 후보로 확정
-      (Hot Package가 아니면 그 레코드는 버림 -> 다른 블록의 Hot Package로 잘못 매칭 방지)
-    - 날짜 아래로 내려가며 첫 ₩... 를 금액으로 사용
+    원본 형태 + 중간 예외 라인 가능.
+    날짜 기준:
+      - 위쪽으로 '가장 가까운 의미 있는 줄' 1개만 상품명 후보로 확정 (다른 블록으로 올라가는 오매칭 방지)
+      - 아래쪽으로 첫 ₩... 줄을 금액으로 사용
     """
     rows = []
     lines = [ln.rstrip("\n") for ln in lines]
@@ -65,8 +109,7 @@ def parse_from_raw(lines):
             if s.startswith("지불 금액:"):
                 j -= 1
                 continue
-            # 가장 가까운 의미 있는 줄 1개만 후보로 사용
-            return s
+            return s  # 가장 가까운 의미 있는 줄 1개만
         return None
 
     def find_amount_downwards(idx: int):
@@ -92,7 +135,7 @@ def parse_from_raw(lines):
             continue
 
         y, mo, da = dm.groups()
-        date = norm_date(y, mo, da)
+        dstr = norm_date(y, mo, da)
 
         product = nearest_meaningful_upwards(i)
         if not product or not product.startswith("Hot Package"):
@@ -102,13 +145,13 @@ def parse_from_raw(lines):
         if amount is None:
             continue
 
-        rows.append((date, amount, product))
+        rows.append((dstr, amount, product))
 
     return rows
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Parse billing history and export Hot Package* entries to CSV."
+        description="Parse billing history and export Hot Package* entries to CSV (with monthly totals)."
     )
     parser.add_argument(
         "input",
@@ -137,6 +180,9 @@ def main():
         rows = parse_from_already_parsed(raw_lines)
     else:
         rows = parse_from_raw(raw_lines)
+
+    # 월별 합계/빈줄 삽입
+    rows = add_month_totals(rows)
 
     # CSV 저장 (헤더 포함)
     with output_path.open("w", newline="", encoding="utf-8") as f:
