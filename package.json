@@ -1,0 +1,16 @@
+{
+  "name": "dark-war-survival",
+  "private": true,
+  "scripts": {
+    "dev": "npm run kill-port && concurrently \"npm run dev:frontend\" \"npm run dev:backend\" --names \"FRONTEND,BACKEND\" --prefix-colors \"cyan,yellow\" --kill-others-on-fail --restart-tries 3",
+    "dev:frontend": "cd web && npm run dev",
+    "dev:backend": "cd server && python -m uvicorn src.api:app --host 0.0.0.0 --port 8000 --reload",
+    "kill-port": "npx kill-port 5173 8000 || echo \"port cleanup done\"",
+    "build": "cd web && npm run build",
+    "postinstall": "cd web && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "kill-port": "^2.0.1"
+  }
+}

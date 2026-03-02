@@ -1,1 +1,55 @@
 .obsidian/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+*.egg
+
+# Node
+node_modules/
+.next/
+out/
+package-lock.json
+
+# Data (로컬 데이터, 커밋하지 않음)
+data/*.json
+data/*.csv
+!data/.gitkeep
+
+# Screenshots
+screenshots/inbox/*
+screenshots/processed/*
+!screenshots/inbox/.gitkeep
+!screenshots/processed/.gitkeep
+
+# OCR model cache
+.EasyOCR/
+
+# Billing (개인 결제 데이터)
+docs/billing/*.txt
+docs/billing/*.csv
+!docs/billing/billing_parser.py
+
+# Generated reports
+docs/reports/*.md
+docs/reports/assets/*.png
+!docs/reports/assets/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local

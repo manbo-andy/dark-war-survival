@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: 240 10% 96%;
+  --foreground: 240 10% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 10%;
+  --primary: 122 39% 49%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 234 29% 92%;
+  --secondary-foreground: 234 29% 14%;
+  --muted: 240 5% 92%;
+  --muted-foreground: 0 0% 40%;
+  --accent: 207 77% 57%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 350 89% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 240 6% 85%;
+  --input: 240 6% 85%;
+  --ring: 122 39% 49%;
+  --radius: 0.5rem;
+  --sidebar-background: 234 29% 96%;
+  --sidebar-foreground: 240 10% 10%;
+  --sidebar-primary: 122 39% 49%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 234 29% 90%;
+  --sidebar-accent-foreground: 234 29% 14%;
+  --sidebar-border: 240 6% 85%;
+  --sidebar-ring: 122 39% 49%;
+  --chart-green: 122 39% 49%;
+  --chart-blue: 207 77% 57%;
+  --chart-red: 350 89% 60%;
+  --chart-yellow: 45 93% 58%;
+}
+
+.dark {
+  --background: 240 10% 4%;
+  --foreground: 0 0% 88%;
+  --card: 222 43% 16%;
+  --card-foreground: 0 0% 88%;
+  --popover: 222 43% 16%;
+  --popover-foreground: 0 0% 88%;
+  --primary: 122 39% 49%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 234 29% 14%;
+  --secondary-foreground: 0 0% 88%;
+  --muted: 234 20% 18%;
+  --muted-foreground: 0 0% 63%;
+  --accent: 207 77% 57%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 350 89% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 240 20% 23%;
+  --input: 240 20% 23%;
+  --ring: 122 39% 49%;
+  --sidebar-background: 234 29% 14%;
+  --sidebar-foreground: 0 0% 88%;
+  --sidebar-primary: 122 39% 49%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 234 20% 18%;
+  --sidebar-accent-foreground: 0 0% 88%;
+  --sidebar-border: 240 20% 23%;
+  --sidebar-ring: 122 39% 49%;
+  --chart-green: 122 39% 49%;
+  --chart-blue: 207 77% 57%;
+  --chart-red: 350 89% 60%;
+  --chart-yellow: 45 93% 58%;
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-sidebar-background: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+  --color-chart-green: hsl(var(--chart-green));
+  --color-chart-blue: hsl(var(--chart-blue));
+  --color-chart-red: hsl(var(--chart-red));
+  --color-chart-yellow: hsl(var(--chart-yellow));
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
